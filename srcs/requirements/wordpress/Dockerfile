@@ -1,17 +1,11 @@
 FROM debian:bookworm
 
-RUN apt-get update && \
-    apt-get install -y \
-    php-fpm \
-    php-mysql \
-    curl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update -y && apt upgrade -y &&  apt install -y php php-mysql php-fpm curl php-redis
 
-# Configure PHP-FPM to listen on all interfaces (not just localhost)
-# This allows NGINX in another container to connect
-RUN sed -i 's|listen = .*|listen = 0.0.0.0:9000|g' /etc/php/*/fpm/pool.d/www.conf
+COPY tools/www.conf /etc/php/8.2/fpm/pool.d
 
-COPY tools/entrypoint.sh /entrypoint.sh
-RUN chmod +x /entrypoint.sh
+COPY tools/install.sh /usr/bin/install.sh
 
-CMD ["/entrypoint.sh"]
+RUN chmod +x /usr/bin/install.sh 
+
+ENTRYPOINT ["install.sh"]
