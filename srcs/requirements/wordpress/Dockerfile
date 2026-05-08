@@ -1,11 +1,11 @@
 FROM debian:bookworm
 
-RUN apt update -y && apt upgrade -y &&  apt install -y php php-mysql php-fpm curl php-redis
+RUN apt-get update && apt-get install -y php-fpm php-mysql curl
 
-COPY tools/www.conf /etc/php/8.2/fpm/pool.d
+COPY conf/www.conf /etc/php/8.2/fpm/pool.d
 
-COPY tools/install.sh /usr/bin/install.sh
+COPY tools/entrypoint.sh /usr/bin/entrypoint.sh
 
-RUN chmod +x /usr/bin/install.sh 
+RUN chmod +x /usr/bin/entrypoint.sh
 
-ENTRYPOINT ["install.sh"]
+ENTRYPOINT ["entrypoint.sh"]
